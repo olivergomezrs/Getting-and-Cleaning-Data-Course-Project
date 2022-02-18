@@ -47,5 +47,9 @@ Data<-subset(Data,select=selectedNames)
 
 str(Data)
 
-
+#Tidy data
+library(plyr);
+tidydats<-aggregate(. ~subject + activity, Data, mean)
+tidydats<-tidydats[order(tidydats$subject,tidydats$activity),]
+write.table(tidydats, file = "tidydata.txt",row.name=FALSE)
 
