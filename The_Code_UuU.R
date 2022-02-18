@@ -15,12 +15,37 @@ files
 
 #3 Read data
 
-y_Test  <- read.table(file.path(path_rf, "test" , "Y_test.txt" ),header = FALSE)
-y_Train <- read.table(file.path(path_rf, "train", "Y_train.txt"),header = FALSE)
+y_test  <- read.table(file.path(path_rf, "test" , "Y_test.txt" ),header = FALSE)
+y_train <- read.table(file.path(path_rf, "train", "Y_train.txt"),header = FALSE)
 
 SubjectTrain <- read.table(file.path(path_rf, "train", "subject_train.txt"),header = FALSE)
 SubjectTest  <- read.table(file.path(path_rf, "test" , "subject_test.txt"),header = FALSE)
 
-x_Test  <- read.table(file.path(path_rf, "test" , "X_test.txt" ),header = FALSE)
-x_Train <- read.table(file.path(path_rf, "train", "X_train.txt"),header = FALSE)
+x_test  <- read.table(file.path(path_rf, "test" , "X_test.txt" ),header = FALSE)
+x_train <- read.table(file.path(path_rf, "train", "X_train.txt"),header = FALSE)
+
+#4 Mix the data (Merge)
+
+Subject <- rbind(SubjectTrain, SubjectTest)
+Activity<- rbind(y_train, y_test)
+Features<- rbind(x_train, x_test)
+
+names(Subject)<-c("subject")
+names(Activity)<- c("activity")
+FeaturesNames <- read.table(file.path(path_rf, "features.txt"),head=FALSE)
+names(Features)<- dataFeaturesNames$V2
+
+Combine <- cbind(Subject, Activity)
+Data <- cbind(Features, Combine)
+
+#Extract mean and standard deviation
+
+subdataFeaturesNames<-FeaturesNames$V2[grep("mean\\(\\)|std\\(\\)", FeaturesNames$V2)]
+
+selectedNames<-c(as.character(subdataFeaturesNames), "subject", "activity" )
+Data<-subset(Data,select=selectedNames)
+
+str(Data)
+
+
 
